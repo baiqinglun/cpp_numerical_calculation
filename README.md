@@ -662,6 +662,8 @@ int main(){
 
 再使用Gauss-Jordan方法归一化消元处理
 
+完整代码如下
+
 ```c++
 /***
  * Gauss-Jordan法求解矩阵的逆

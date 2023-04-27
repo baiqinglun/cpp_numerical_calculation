@@ -847,3 +847,291 @@ int main(){
     return 0;
 }
 ```
+
+## 3、求解非线性方程
+
+求解非线性方程组往往不能使用解析的方法，使用迭代的数值方法。
+
+单个非线性方程
+$$
+\begin{equation}
+F(x) = 0
+\end{equation}
+$$
+具有n个方程和n个未知数的非线性方程组
+$$
+\begin{equation}
+\begin{aligned}
+F_{0}(x_{0},x_{1},...,x_{n-1}) = 0\\
+F_{1}(x_{0},x_{1},...,x_{n-1}) = 0\\
+F_{n-1}(x_{0},x_{1},...,x_{n-1}) = 0
+\end{aligned}
+\end{equation}
+$$
+
+方程2可以简写为
+$$
+\tilde{F} (\tilde {x}) = \tilde {0}
+$$
+
+方程的解法：
+
+1. 图解法：画图看交点；
+2. 反复实验法：给初值，反复试验；
+3. 归类与开放法：限定在一个区间；
+4. 对分法。
+
+### 3.1 对分法
+
+新的估计值
+$$
+\begin{equation}
+\begin{aligned}
+x_{new} = \frac{x_{low}+x_{high}}{2}\nonumber
+\end{aligned}
+\end{equation}
+$$
+这个点上的函数值共有4种情况
+$$
+\begin{equation}
+\begin{gather}
+F(x_{new})F(x_{low}) < 0 \nonumber\\
+F(x_{new})F(x_{high}) < 0 \nonumber\\
+|F(x_{new})| <eps \nonumber \\
+F(x_{new})=0 \nonumber
+\end{gather}
+\end{equation}
+$$
+
+例：使用对分法求方程$x^{2}-3=0$或者$x-cos(x) = 0$的正根。
+
+定义Bisection类实现对分求解器
+
+```c++
+/**
+ * @cname: Bisection
+ * @brief: 使用对分法迭代求解方程
+ * @birth: created by Dablelv on bql
+ */
+class Bisection
+{
+private:
+    int iter,       // 迭代次数
+        funNum;     // 方程序号
+    double eps,     // 公差
+           error,   // 残差
+           f,       // 函数值
+           f_low,   // 下限的函数值
+           f_high,  // 上限的函数值
+           f_new,   // 新x的函数值
+           x_low,   // 下限
+           x_high,  // 上限
+           x_new;   // 新值
+public:
+    Bisection() {iter = 0;}
+    ~Bisection() {}
+    void solution();
+
+    /**
+     * @fname: Bisection::function
+     * @brief: 通过funNom选择函数求解
+     * @param: double
+     * @return: double
+     * @birth: created by Dablelv on bql
+     */
+    double function(double x)
+    {
+        switch(funNum)
+        {
+            case 0 :
+                f = x - cos(x);
+                break;
+            case 1 :
+                f = pow(x,2) - 3;
+                break;
+        }
+        return f;
+    }
+};
+```
+
+求解流程：
+
+1. 先判断上下限函数乘积是否符合对分法；
+2. 判断上下限函数的值是否符合公差范围；
+3. 迭代对分求解新的x值，重新规定上下限；
+4. 直到新x值的函数值小于公差；
+
+
+```c++
+/**
+ * @fname: Bisection::solution
+ * @brief: 求解
+ * @param: void
+ * @return: void
+ * @birth: created by Dablelv on bql
+ */
+void Bisection::solution(){
+    cout << "\n选择使用的方程";cin >> funNum;
+    cout << "\n输入下限";cin >> x_low;
+    cout << "\n输入上限";cin >> x_high;
+
+    f_low = function(x_low);
+    f_high = function(x_high);
+
+    if((f_low*f_high) > 0)
+    {
+        cout << "\n错误的归类" << endl;
+        exit(0);
+    }
+
+    cout << "\n输入公差: ";cin >> eps;
+
+    if(fabs(f_low) < eps)
+    {
+        cout << "\n解是: " <<x_low <<endl;
+        exit(0);
+    }
+    if(fabs(f_high) < eps)
+    {
+        cout << "\n解是: "<< x_high <<endl;
+        exit(0);
+    }
+
+    do
+    {
+        iter++;
+        x_new = 0.5 * (x_low + x_high);
+        f_new = function(x_new);
+        error = fabs(f_new);
+        if((f_new * f_low) < 0)
+        {
+            x_high = x_new;
+        }else
+        {
+            x_low = x_new;
+        }
+    }while(error >= eps);
+
+    cout << "\n解是:" << x_new <<endl;
+    cout << "\n收敛于" << iter << "次迭代" << endl;
+}
+```
+
+完整代码如下：
+
+```c++
+/**
+ * @brief: 对分法
+ * @birth: created by Dablelv on bql at 2023-04-27
+ */
+#include<iostream>
+#include<math.h>
+
+using namespace std;
+
+/**
+ * @cname: Bisection
+ * @brief: 使用对分法迭代求解方程
+ * @birth: created by Dablelv on bql
+ */
+class Bisection
+{
+private:
+    int iter,       // 迭代次数
+        funNum;     // 方程序号
+    double eps,     // 公差
+           error,   // 残差
+           f,       // 函数值
+           f_low,   // 下限的函数值
+           f_high,  // 上限的函数值
+           f_new,   // 新x的函数值
+           x_low,   // 下限
+           x_high,  // 上限
+           x_new;   // 新值
+public:
+    Bisection() {iter = 0;}
+    ~Bisection() {}
+    void solution();
+
+    /**
+     * @fname: Bisection::function
+     * @brief: 通过funNom选择函数求解
+     * @param: double
+     * @return: double
+     * @birth: created by Dablelv on bql
+     */
+    double function(double x)
+    {
+        switch(funNum)
+        {
+            case 0 :
+                f = x - cos(x);
+                break;
+            case 1 :
+                f = pow(x,2) - 3;
+                break;
+        }
+        return f;
+    }
+};
+
+/**
+ * @fname: Bisection::solution
+ * @brief: 求解
+ * @param: void
+ * @return: void
+ * @birth: created by Dablelv on bql
+ */
+void Bisection::solution(){
+    cout << "\n选择使用的方程";cin >> funNum;
+    cout << "\n输入下限";cin >> x_low;
+    cout << "\n输入上限";cin >> x_high;
+
+    f_low = function(x_low);
+    f_high = function(x_high);
+
+    if((f_low*f_high) > 0)
+    {
+        cout << "\n错误的归类" << endl;
+        exit(0);
+    }
+
+    cout << "\n输入公差: ";cin >> eps;
+
+    if(fabs(f_low) < eps)
+    {
+        cout << "\n解是: " <<x_low <<endl;
+        exit(0);
+    }
+    if(fabs(f_high) < eps)
+    {
+        cout << "\n解是: "<< x_high <<endl;
+        exit(0);
+    }
+
+    do
+    {
+        iter++;
+        x_new = 0.5 * (x_low + x_high);
+        f_new = function(x_new);
+        error = fabs(f_new);
+        if((f_new * f_low) < 0)
+        {
+            x_high = x_new;
+        }else
+        {
+            x_low = x_new;
+        }
+    }while(error >= eps);
+
+    cout << "\n解是:" << x_new <<endl;
+    cout << "\n收敛于" << iter << "次迭代" << endl;
+}
+
+int main(){
+    Bisection bisection;
+    bisection.solution();
+    return 0;
+}
+```

@@ -106,11 +106,11 @@ void Gauss::gauss_input(){
 void Gauss::gauss_elimenation(){
     for(int k = 0;k<n-1;k++){
         // 选择主元
-        double max = a[k][k];
+        double max = fabs(a[k][k]);
         pivrow = k;
         for(int i=k+1;i<n;i++){
-            if(a[i][k] > max){
-                max = a[i][k];
+            if(fabs(a[i][k]) > max){
+                max = fabs(a[i][k]);
                 pivrow = i;
                 // swap
                 swap(k);

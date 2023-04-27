@@ -1,6 +1,8 @@
+/**
+ * 顺序主元消去法
+*/
 #include<iostream>
 #include<math.h>
-#include<process.h>
 using namespace std;
 
 class gauss{

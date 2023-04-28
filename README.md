@@ -1497,3 +1497,26 @@ int main(){
     return 0;
 }
 ```
+
+### 4.4 求解非线性方程组
+
+两种方法：
+
+1. Newton-Raphson（主要）
+2. 逐次代入法
+
+Newton-Raphson的迭代公式为
+
+$$\tilde{x}_{new} =  \tilde{x}_{old}-[\tilde {A}|_{\tilde {x}_{old}}]^{-1}\tilde {F}(\tilde{x}_{old}) $$
+
+其中$\tilde {A}$是Jacobian矩阵
+
+$$
+\tilde{A} =\begin{bmatrix}
+ \frac{\partial F_{0}}{\partial x_{0}}  &  \frac{\partial F_{0}}{\partial x_{1}} & ... &  \frac{\partial F_{0}}{\partial x_{n-1}}\\
+  \frac{\partial F_{1}}{\partial x_{0}}  &  \frac{\partial F_{1}}{\partial x_{1}} & ... &  \frac{\partial F_{1}}{\partial x_{n-1}}\\
+  ...& ... & ... & ...\\
+  \frac{\partial F_{n-1}}{\partial x_{0}}  &  \frac{\partial F_{n-1}}{\partial x_{1}} & ... &  \frac{\partial F_{n-1}}{\partial x_{n-1}}
+\end{bmatrix}
+$$
+

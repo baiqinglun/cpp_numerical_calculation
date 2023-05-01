@@ -1858,3 +1858,359 @@ int main(){
     return 0;
 }
 ```
+
+### 4.5 Graeffe求实根和负根
+
+P145
+
+```c++
+/**
+ * @brief: 使用根平方法求解实根和复根
+ * @birth: created by Dablelv on bql at 2023-05-01
+ */
+#include<iostream>
+#include<math.h>
+using namespace std;
+
+class Graeffe
+{
+private:
+    int flag,
+        iter,
+        iter_max,
+        n;
+    double eps,
+           low_limit,   // Ai值的下限
+           pm,          // 根的负值计算得到的多项式的值
+           pp,          // 根的正值计算得到的多项式的值
+           root,        // 根的值
+           sum,         // 累加器
+           up_limit,    // Ai值的上限
+           val,         // 多项式的值
+           *a,          // 原多项式的系数
+           *b,          // 迭代后平方多项式的系数
+           *c;          // 迭代前平方多项式的系数
+
+public:
+    Graeffe();
+    ~Graeffe();
+    void solution();
+};
+
+Graeffe::Graeffe()
+{
+    flag = 0;
+    iter = 0;
+    iter_max = 100;
+    n = 0;
+    eps = 0.0;
+    low_limit = 1e-35;
+    root = 0.0;
+    sum = 0.0;
+    up_limit = 1e35;
+    val = 0.0;
+    a = nullptr;
+    b = nullptr;
+    c = nullptr;
+}
+
+Graeffe::~Graeffe()
+{
+    delete [] a;
+    delete [] b;
+    delete [] c;
+}
+
+void Graeffe::solution()
+{
+    std::cout << "\n输入多项式的阶数";
+    cin >> n;
+    a = new double[n+1];
+    b = new double[n+1];
+    c = new double[n+1];
+
+    for(int i = 0; i <= n; ++i)
+    {
+        std::cout << "\n请输入a[" << i << "] = " ;
+        cin >> a[i];
+    };
+    std::cout << "\n输入可以认为多项式值为0的量";
+    cin >> eps;
+
+    for(int i = 1; i <= n; ++i)
+    {
+        a[i] /= a[0];
+        c[i] = a[i];
+    };
+    a[0] = 1.0;
+    b[0] = 1.0;
+    c[0] = 1.0;
+
+    do
+    {
+        ++iter;
+        for(int i = 1; i <= n; ++i)
+        {
+            sum = 0.0;
+            for(int k = 1; k <= i; ++k)
+            {
+                if((i+k) <= n)
+                {
+                    sum += pow((-1),k) * c[i+k] * c[i-k];
+                }
+                b[i] = pow((-1),i) * (c[i] * c[i] + 2*sum);
+            };
+        }
+
+        for(int i = 1; i <= n; ++i)
+        {
+            if(b[i] != 0)
+            {
+                if(fabs(b[i]) > up_limit || fabs(b[i]) < low_limit) {flag = 1;}
+            }
+        };
+
+        if(flag != 1)
+        {
+            for(int i = 1; i <= n; ++i)
+            {
+                c[i] = b[i];
+            };
+        }
+
+        if(iter > iter_max)
+        {
+            std::cout << "\n经过" << iter_max << "次迭代没有找到根" << std::endl;
+            exit(0);
+        }
+    }while(0 == flag);
+
+    std::cout << "-----------------------------" << std::endl;
+    std::cout << "\n迭代次数 = " << iter << std::endl;
+
+    for(int i = 1; i <= n; ++i)
+    {
+        if(0 == b[i])
+        {
+            std::cout << "\n错误.A[" << i << "] = 0" << std::endl;
+            exit(0);
+        }
+    };
+    for(int i = 1; i <= n; ++i)
+    {
+        root = pow(fabs(b[i]/b[i-1]),pow(2,(-iter)));
+        pp = 1.0;
+        pm = 1.0;
+        for(int j = 1; j <= n; ++j)
+        {
+            pp = pp * root + a[j];
+            pm = pm * (-root) + a[j];
+        };
+        if(fabs(pp) > fabs(pm))
+        {
+            root = -root;
+            val = pm;
+        }else
+        {
+            val = pp;
+        }
+        if(fabs(val) < eps) {std::cout << "\n找到了根 = " << root << std::endl;}
+        else {std::cout << "\n可能没有根.根 = " << root << ".多项式的值 = " << val << std::endl;}
+    };
+}
+
+
+int main(){
+    Graeffe g;
+    g.solution();
+
+    return 0;
+}
+```
+
+## 4、矩阵的特征值与特征向量
+
+### 4.1 Faddeev-Leverrier
+
+1. 方阵的迹 = 对角线元素之和；
+
+第一个系数
+
+$$\alpha _{1} = tr\tilde{A}_{1} $$
+
+随后的矩阵迭代产生
+
+$$\tilde {A}_{k}=\tilde {A}(\tilde {A}_{k-1} - \alpha_{k-1} \tilde {I}),k =2,3,...,n$$
+
+系数为
+
+$$\alpha_{k} = \frac{tr\tilde {A}_{k}}{k},k=2,3,...,n $$
+
+完整代码演示
+
+```c++
+/**
+ * @brief: 使用Faddeev-Leverrier求解矩阵的特征值与特征向量
+ * @birth: created by Dablelv on bql at 2023-05-01
+ */
+#include<iostream>
+
+using namespace std;
+
+/**
+ * @cname: FaddeevLeverrier
+ * @brief: 使用Faddeev-Leverrier法求解的类
+ * @birth: created by Dablelv on bql
+ */
+class FaddeevLeverrier
+{
+private:
+    int     n;
+    double  sum1,        // 累加器
+            sum2,
+            *alpha,      // 特征多项式的系数
+            **a,         // 原始矩阵
+            **b,         // 矩阵Ai
+            **c;         // A(k-1)-a(k-1)I
+public:
+    void solution();
+    double trace();
+    ~FaddeevLeverrier();
+    FaddeevLeverrier();
+};
+
+FaddeevLeverrier::FaddeevLeverrier()
+{
+    n = 0;
+    sum1 = 0.0;
+    sum2 = 0.0;
+    alpha = nullptr;
+    for(int i = 0; i < n; ++i)
+    {
+        a[i] = nullptr;
+    };
+    a = nullptr;
+    for(int i = 0; i < n; ++i)
+    {
+        b[i] = nullptr;
+    };
+    b = nullptr;
+    for(int i = 0; i < n; ++i)
+    {
+        c[i] = nullptr;
+    };
+    c = nullptr;
+}
+
+FaddeevLeverrier::~FaddeevLeverrier()
+{
+    delete [] alpha;
+    for(int i = 0; i < n; ++i)
+    {
+        delete [] a[i];
+    };
+    delete [] a;
+    for(int i = 0; i < n; ++i)
+    {
+        delete [] b[i]; 
+    };
+    delete [] b;
+    for(int i = 0; i < n; ++i)
+    {
+        delete [] c[i];
+    };
+    delete [] c;
+}
+
+/**
+ * @fname: FaddeevLeverrier::solution
+ * @brief: 求解
+ * @param: void
+ * @return: void
+ * @birth: created by Dablelv on bql
+ */
+void FaddeevLeverrier::solution()
+{
+    std::cout << "\n输入矩阵阶数" << std::endl;
+    std::cin >> n;
+    // 动态分配内存a、b、c、alpha
+    a = new double * [n];
+    for(int i = 0; i < n; ++i) {a[i] = new double[n];}
+    b = new double * [n];
+    for(int i = 0; i < n; ++i) {b[i] = new double[n];}
+    c = new double * [n];
+    for(int i = 0; i < n; ++i) {c[i] = new double[n];}
+    alpha = new double[n+1];
+
+    for(int i = 0; i < n; ++i)
+    {
+        for(int j = 0; j < n; ++j)
+        {
+            std::cout << "\n请输入a[" << i << "][" << j << "] = ";
+            std::cin >> a[i][j];
+        };
+    };
+    alpha[0] = 1.0;
+    for(int i = 0; i < n; ++i)
+    {
+        for(int j = 0; j < n; ++j) {b[i][j] = a[i][j];}      
+    };
+
+    alpha[1] = trace();
+
+    for(int k = 2; k <= n; ++k)
+    {
+        // 求出c矩阵
+        for(int i = 0; i < n; ++i)
+        {
+            for(int j = 0; j < n; ++j)
+            {
+              if(i == j) {c[i][j] = b[i][j] - alpha[k-1];}
+              else {c[i][j] = b[i][j];}
+            };
+        };
+        for(int i = 0; i < n; ++i)
+        {
+            for(int j = 0; j < n; ++j)
+            {
+                sum2 = 0.0;
+                // 计算矩阵点乘
+                for(int l = 0; l < n; ++l) {sum2 += a[i][l] * c[l][j];}
+                b[i][j] = sum2;
+            };
+        };
+        alpha[k] = trace() / k;
+    };
+    std::cout << "\n特征多项式的系数是：" << std::endl;
+    for(int i = 1; i <= n; ++i)
+    {
+        std::cout << "\nalpha[" << i << "] = " << alpha[i] << std::endl;
+    };
+}
+
+/**
+ * @fname: FaddeevLeverrier::trace
+ * @brief: 计算矩阵的迹（对角线元素之和）
+ * @param: void
+ * @return: double
+ * @birth: created by Dablelv on bql
+ */
+double FaddeevLeverrier::trace()
+{
+    sum1 = 0.0;
+    for(int i = 0; i < n; ++i)
+    {
+        for(int j = 0; j < n; ++j)
+        {
+            if(i == j) {sum1 += b[i][j];}
+        };
+    };
+    return sum1;
+}
+
+int main(){
+    FaddeevLeverrier f;
+    f.solution();
+    return 0;
+}
+```

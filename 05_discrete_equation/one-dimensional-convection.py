@@ -1,10 +1,11 @@
+
 import numpy as np
 import matplotlib.pyplot as plt
 
 nx = 41#空间网格数
 dx = 2/(nx-1)#空间网格尺寸
-nt=20#时间步数
-dt=0.025#时间步长
+nt = 20#时间步数
+dt = 0.025#时间步长
 
 u = np.ones (nx)
 u[int(0.6/dx):int(1/dx+1)]=2

@@ -46,7 +46,12 @@
         "new": "cpp",
         "numbers": "cpp",
         "stdexcept": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "cerrno": "cpp",
+        "climits": "cpp",
+        "ios": "cpp",
+        "queue": "cpp"
     },
-    "C_Cpp.errorSquiggles": "enabled"
+    "C_Cpp.errorSquiggles": "enabled",
+    "cmake.sourceDirectory": "D:/Desktop/github/cpp_numerical_calculation-1/06＿finite_volume_method"
 }

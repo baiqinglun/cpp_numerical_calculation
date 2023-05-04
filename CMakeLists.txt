@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.15)
 project(demo)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -25,10 +25,9 @@ ELSEIF (UNIX)
 ENDIF ()
 
 include_directories(include)
-
+add_subdirectory(07_diffusion_term)
 add_definitions(-DOPJ_STATIC)
 add_definitions(-DMATPLOTLIBCPP_PYTHON_HEADER=Python.h)
-add_executable(demo1 07_diffusion_term/01_heat_conduction_rod_copy.cpp)
 
 #target_link_libraries(demo python310_d.lib)
 # message(STATUS "*** dump start cmake variables ***")

@@ -8,6 +8,7 @@
 #include<iostream>
 #include<math.h>
 #include<vector>
+#include "../include/matplotlibcpp.h"
 
 using namespace std;
 
@@ -26,9 +27,11 @@ private:
             k,      // 热传导系数
             A,      // 截面积
             L,      // 棒的总长度
-            ratio;
+            ratio,
+            dx;
     std::vector<std::vector<double>> a;     // 求解矩阵
     std::vector<double> T;     // 温度矩阵
+    std::vector<double> x;
     
 public:
     ODHotRod();
@@ -39,6 +42,7 @@ public:
     void construction();
     void gauss_solveT();
     void printMatix(const string msg);
+    void plotImg();
 };
 
 ODHotRod::ODHotRod()
@@ -64,7 +68,7 @@ ODHotRod::~ODHotRod()
  * @birth: created by Dablelv on bql
  */
 void ODHotRod::printMatix(const string msg){
-    cout << "\n"+msg+"为：" <<  endl;
+    // std::cout << "\n"+msg+"为：" <<  std::endl;
     for(int i=0;i<n;i++){
         for(int j=0;j<n+1;j++){
             cout <<  a[i][j] << "\t";
@@ -113,6 +117,7 @@ void ODHotRod::input()
     std::cout << "\n请输入横截面积：A = ";std::cin >> A;
     std::cout << "\n请输入长度：L = ";std::cin >> L;
     std::cout << "\n请输入热传导系数：k = ";std::cin >> k;
+
 }
 
 /**
@@ -124,57 +129,19 @@ void ODHotRod::input()
  */
 void ODHotRod::construction()
 {
-    double dx = L / n;
+    dx = L / n;
+
     double gDiff_face = A / dx;
     double gDiff_wall = 2 * A / dx;
-    // double kf_f = k;
-    // double k12 = k;
-    // double k6 = k;
-
-    // double aE_1 = -kf_f * aDiff;
-    // double aW_1 = -k12 * aDiff1;
-    // double aE = -kf_f * aDiff;
-    // double aW = -kf_f * aDiff;
-    // double aE_2 = -k6 * aDiff1;
-    // double aW_2 = -kf_f * aDiff;
 
     double a_wall = -k * gDiff_wall;
     double a_face = -k * gDiff_face;
 
-    // double ac1 = -(aE_1 + aW_1);
-    // double ac = -(aE + aW);
-    // double ac2 = -(aE_2 + aW_2);
     double ac_wall = -(a_wall + a_face);
     double ac_face = -(a_face * 2);
 
-    // double bc1 = - aW_1 * T1;
-    // double bc2 = - aE_2 * T2;
     double bc_left = - a_wall * T1;
     double bc_right = - a_wall * T2;
-
-    // a[0][0] = ac1;
-    // a[0][1] = aE_1;
-
-    // a[1][0] = aE;
-    // a[1][1] = ac;
-    // a[1][2] = aW;
-
-    // a[2][1] = aE;
-    // a[2][2] = ac;
-    // a[2][3] = aW;
-
-    // a[3][2] = aE;
-    // a[3][3] = ac;
-    // a[3][4] = aW;
-
-    // a[4][3] = aW_2;
-    // a[4][4] = ac2;
-
-    // a[0][5] = bc1;
-    // a[1][5] = 0;
-    // a[2][5] = 0;
-    // a[3][5] = 0;
-    // a[4][5] = bc2;
 
     a.resize(n);
     for(int i = 0; i < n; ++i)
@@ -278,12 +245,25 @@ void ODHotRod::gauss_solveT(){
     };
 }
 
+namespace plt = matplotlibcpp;
+void ODHotRod::plotImg()
+{
+    x.resize(n);
+    x[0] = 0;
+    for(int i = 1; i < x.size(); ++i)
+    {
+        x[i] = x[i-1] + dx;
+    }
+    plt::plot(x,T);
+    plt::show();
+}
+
 int main(){
     ODHotRod o;
     o.input();
     o.construction();
     o.gauss_elimenation();
     o.gauss_solveT();
-    
+    o.plotImg();
     return 0;
 }

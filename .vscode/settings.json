@@ -50,8 +50,9 @@
         "cerrno": "cpp",
         "climits": "cpp",
         "ios": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "xstring": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled",
-    "cmake.sourceDirectory": "D:/Desktop/github/cpp_numerical_calculation-2"
+    "cmake.sourceDirectory": "D:/Desktop/github/cpp_numerical_calculation"
 }

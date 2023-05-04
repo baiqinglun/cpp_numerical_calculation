@@ -7,6 +7,7 @@
  */
 #include<iostream>
 #include<math.h>
+#include<vector>
 
 using namespace std;
 
@@ -26,8 +27,8 @@ private:
             A,      // 截面积
             L,      // 棒的总长度
             ratio;
-    double **a,     // 求解矩阵
-            *T;     // 温度矩阵
+    std::vector<std::vector<double>> a;     // 求解矩阵
+    std::vector<double> T;     // 温度矩阵
     
 public:
     ODHotRod();
@@ -52,12 +53,7 @@ ODHotRod::ODHotRod()
 
 ODHotRod::~ODHotRod()
 {
-    for(int i = 0; i < n; ++i)
-    {
-        delete [] a[i];
-    };
-    delete []a;
-    delete []T;
+    
 }
 
 /**
@@ -180,19 +176,10 @@ void ODHotRod::construction()
     // a[3][5] = 0;
     // a[4][5] = bc2;
 
-    a = new double*[n];
+    a.resize(n);
     for(int i = 0; i < n; ++i)
     {
-        a[i] = new double[n+1];
-    };
-
-
-    for(int i = 0; i < n; ++i)
-    {
-        for(int j = 0; j < n+1; ++j)
-        {
-            a[i][j] = 0;  
-        };
+        a[i].resize(n+1);
     };
     printMatix("初始矩阵");
 
@@ -275,7 +262,7 @@ void ODHotRod::gauss_elimenation(){
  * @birth: created by Dablelv on bql
  */
 void ODHotRod::gauss_solveT(){
-    T = new double[n];
+    T.resize(n);
     T[n-1] = a[n-1][n] / a[n-1][n-1];
     double sum;
     for(int i = n-2;i>=0;i--){

@@ -19,7 +19,6 @@ public:
     Differential();
     ~Differential();
     void solution();
-    void function();
 };
 
 Differential::Differential()

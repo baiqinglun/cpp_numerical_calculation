@@ -12,6 +12,15 @@ using vector_2d = std::vector<vector_1d>;
 
 namespace Tool
 {
+    /**
+     * @fname: 交换矩阵行列
+     * @brief: vector_2d &a：需要交换的矩阵
+     *          const int k：从第几行开始交换
+     *          const int pivrow：最大的行
+     * @param: void
+     * @return: void
+     * @birth: created by Dablelv on bql
+     */
     void swap(vector_2d &a,const int k,const int pivrow)
     {
         double temp;
@@ -23,6 +32,13 @@ namespace Tool
         }
     }
 
+    /**
+     * @fname: da
+     * @brief: 
+     * @param: void
+     * @return: void
+     * @birth: created by Dablelv on bql
+     */
     void printMatix(const vector_2d &a,const std::string msg)
     {
         int row = a.size();

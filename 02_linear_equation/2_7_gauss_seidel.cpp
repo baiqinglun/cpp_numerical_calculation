@@ -3,6 +3,8 @@
  * @birth: created by Dablelv on bql at 2023-05-06
  */
 
+
+
 #include<iostream>
 #include<math.h>
 #include<vector>
@@ -55,7 +57,6 @@ namespace Tool
     void printX(const vector_1d &x)
     {
         int n = x.size();
-        std::cout << "n = " << n << std::endl;
         std::cout << "\n输出结果:"<< std::endl;
         for(int i=0;i<n;i++){
             std::cout << "x[" << i << "] = " << x[i] << std::endl;
@@ -80,7 +81,7 @@ namespace GaussSeidel
             std::cout << "第" << iter << "次迭代" << std::endl;
             for(int i = 0; i < n; ++i)
             {
-                xold = x[i];
+                xold = x[i];    // 使用之前的值就是为了记录一下，求解残差
                 sum = 0.0;
                 for(int j = 0; j < n; ++j)
                 {
@@ -105,8 +106,6 @@ int main(){
     vector_1d b = {2.5,4,-16};
     vector_1d x = {0,0,0};
     double eps = 1e-6;
-    int n = a.size();
-
     GaussSeidel::solve(a,b,x,eps);
     Tool::printX(x);
 

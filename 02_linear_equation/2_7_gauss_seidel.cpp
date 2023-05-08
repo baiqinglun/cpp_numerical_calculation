@@ -84,7 +84,7 @@ namespace GaussSeidel
                 sum = 0.0;
                 for(int j = 0; j < n; ++j)
                 {
-                    if(j != i) sum += a[i][j] * x[j];  
+                    if(j != i) sum += a[i][j] * x[j];
                 };
                 x[i] = (b[i] - sum) / a[i][i];
                 error = fabs(xold - x[i]) / x[i];

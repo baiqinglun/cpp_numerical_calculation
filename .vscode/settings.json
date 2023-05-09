@@ -51,7 +51,18 @@
         "climits": "cpp",
         "ios": "cpp",
         "queue": "cpp",
-        "xstring": "cpp"
+        "xstring": "cpp",
+        "cstring": "cpp",
+        "xfacet": "cpp",
+        "xiosbase": "cpp",
+        "xlocale": "cpp",
+        "xlocinfo": "cpp",
+        "xlocnum": "cpp",
+        "xmemory": "cpp",
+        "xmemory0": "cpp",
+        "xstddef": "cpp",
+        "xtr1common": "cpp",
+        "xutility": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled",
     "cmake.sourceDirectory": "D:/Desktop/github/cpp_numerical_calculation"
